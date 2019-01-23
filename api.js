@@ -7,21 +7,22 @@ const bodyParser = require('body-parser')
 
 const app = new express();
 
-mongoose.connect('mongodb://localhost:27017/test-homie-db');
-mongoose.connection.on('connected', () => {
-  console.log('connected to mongod');
-});
+// mongoose.connect('mongodb://localhost:27017/test-homie-db');
+// mongoose.connection.on('connected', () => {
+//   console.log('connected to mongod');
+// });
 
-mongoose.connection.on('error', () => {
-  console.log('failed to connect to mongod');
-});
+// mongoose.connection.on('error', () => {
+//   console.log('failed to connect to mongod');
+// });
 
-// const db = require('./config/keys').mongoURI;
+const db = require('./config/keys').mongoURI;
 
-// mongoose
-//     .connect(db)
-//     .then(() => console.log('MongoDB Connected'))
-//     .catch(err => console.log(err))
+// Connect to MongoDB
+mongoose
+  .connect(db)
+  .then(() => console.log('MongoDB Connected'))
+  .catch(err => console.log(err));
 
 app.use(express.json())
 
