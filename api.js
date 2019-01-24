@@ -3,9 +3,11 @@ const mongoose = require('mongoose');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 
 const app = new express();
+
+const cors = require('cors');
 
 // mongoose.connect('mongodb://localhost:27017/test-homie-db');
 // mongoose.connection.on('connected', () => {
@@ -15,6 +17,8 @@ const app = new express();
 // mongoose.connection.on('error', () => {
 //   console.log('failed to connect to mongod');
 // });
+
+app.use(cors());
 
 const db = require('./config/keys').mongoURI;
 

@@ -17,9 +17,15 @@ const generateToken = (user) => {
 }
 
 router.post('/', (req, res) => {
-    const { email, password } = req.body;
+    const { firstName, lastName, mobile, email, password } = req.body;
+    if (!firstName) {
+      res.send('first name required')
+    }
+    if (!lastName) {
+      res.send('last name required')
+    }
     if (!email) {
-      res.send("email required")
+      res.send('email required')
     }
     if (!password) {
       res.send('password required')
@@ -27,11 +33,11 @@ router.post('/', (req, res) => {
     User.findOne({ email })
     .then(doc => {
       if (doc) {
-        res.send("User already exists")
+        res.send('User already exists')
       } else {
         const salt = bcrypt.genSaltSync(saltRounds);
         const hash = bcrypt.hashSync(password, salt);
-        const user = new User({ email: email, password: hash })
+        const user = new User({firstName: firstName, lastName: lastName, mobile: mobile, email: email, password: hash })
         user.save()
             .then(doc => {
                 const token = generateToken(doc);
