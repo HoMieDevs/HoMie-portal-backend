@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const saltRounds = 10
 
+const User = require('../models/User');
+
 const authenticateUser = (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     console.log(info)
