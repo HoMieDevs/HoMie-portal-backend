@@ -16,7 +16,8 @@ const userSchema = new Schema({
   },
   email: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   password: {
     type: String,
@@ -37,6 +38,8 @@ isDeleted: {
     default: false
   }
 });
+
+// userSchema.plugin(passportLocalMongoose, { usernameField : 'email' });
 
 // const userSchema = new Schema({
 //     email: String,
