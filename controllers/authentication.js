@@ -8,11 +8,11 @@ const User = require('../models/User');
 
 const authenticateUser = (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
-    console.log(info)
     if (err) { return next(err) }
     if (!user) { return res.status(401).send(info.message) }
     req.logIn(user, (err) => {
       if (err) { return next(err) }
+      console.log(user)
       return res.send('Successfully authenticated');
     });
   })(req, res, next);
@@ -27,6 +27,7 @@ const isAuthenticated = (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
   if(!req.user.admin) {
+    console.log(req.user)
     return res.status(403).send('Not authorized!');
   }
   next();
