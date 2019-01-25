@@ -13,7 +13,6 @@ const authenticateUser = (req, res, next) => {
     if (!user) { return res.status(401).send(info.message) }
     req.logIn(user, (err) => {
       if (err) { return next(err) }
-      console.log(user)
       return res.send('Successfully authenticated');
     });
   })(req, res, next);
@@ -28,7 +27,6 @@ const isAuthenticated = (req, res, next) => {
 
 const isAdmin = (req, res, next) => {
   if(!req.user.admin) {
-    console.log(req.user)
     return res.status(403).send('Not authorized!');
   }
   next();
@@ -57,7 +55,6 @@ router.post('/register', isAuthenticated, isAdmin, (req, res) => {
 
 router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
   const { date, location, staff } = req.body;
-  const { date, location, staff} = req.body;
   const roster = new Roster({
     date,
     location,
@@ -77,18 +74,29 @@ router.get('/unavailibility', (req, res) => {
   
 })
 
-router.put('/unavailibility', (req, res) => {
-  
+router.put('/unavailability/:id', isAuthenticated, isAdmin, (req, res) => {
+  const _id = req.params.id
+  const { unavailability } = req.body
+
+  User.findOneAndUpdate(
+      { _id },
+      { unavailability },
+      {
+          new: true,
+          runValidators: true
+      }
+  )
+  .then(doc => res.send(doc));
+
 })
+
 
 router.get('/roster/:id/', (req,res)=>{
     const { id } = req.params;
-    console.log(id)
     Roster.findOne({
       "_id": id
     }, function(err, roster) {
       res.send(roster);
-      console.log(roster)
     });
 });
 
