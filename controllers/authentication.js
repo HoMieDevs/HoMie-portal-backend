@@ -5,6 +5,7 @@ const passport = require('passport');
 const saltRounds = 10
 
 const User = require('../models/User');
+const Roster = require('../models/Roster');
 
 const authenticateUser = (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -53,6 +54,27 @@ router.post('/register', isAuthenticated, isAdmin, (req, res) => {
     })
     .catch(err => res.status(401).send('bad request'))
 });
+
+router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
+  console.log("I'm in the roster route")
+  console.log(req.user)
+  // const currentUser = req.user
+  const { date, location, staff } = req.body;
+  console.log(req.body)
+  console.log(staff)
+  const roster = new Roster({
+    date,
+    location,
+    staff
+  });
+
+  roster.save()
+    .then(doc => {
+      res.send(`${doc.location} has been created`);
+    })
+    .catch(err => res.status(401).send(err))
+});
+
 
 router.get('/logout', (req, res) => {
   req.logout();

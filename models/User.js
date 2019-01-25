@@ -33,7 +33,7 @@ const userSchema = new Schema({
     comment: String,
     approved: Boolean
   },
-isDeleted: {
+  isDeleted: {
     type: Boolean,
     default: false
   }
