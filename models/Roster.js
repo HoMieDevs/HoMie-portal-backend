@@ -29,10 +29,12 @@ const rosterSchema = new Schema({
   location: String,
   staff: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-        startTime: Date,
-        endTime: Date
+      staffMember: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+      },      
+      startTime: String,
+      endTime: String
     }
   ]
 });
