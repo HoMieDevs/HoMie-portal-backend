@@ -56,12 +56,8 @@ router.post('/register', isAuthenticated, isAdmin, (req, res) => {
 });
 
 router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
-  console.log("I'm in the roster route")
-  console.log(req.user)
-  // const currentUser = req.user
+  const { date, location, staff } = req.body;
   const { date, location, staff} = req.body;
-  console.log(req.body)
-  console.log(staff)
   const roster = new Roster({
     date,
     location,
@@ -74,6 +70,16 @@ router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
     })
     .catch(err => res.status(401).send(err))
 });
+
+router.get('/unavailibility', (req, res) => {
+  console.log(req.user)
+  // const { date, allDay, startTime, endTime, comment, approved } = req.body;
+  
+})
+
+router.put('/unavailibility', (req, res) => {
+  
+})
 
 router.get('/roster/:id/', (req,res)=>{
     const { id } = req.params;
@@ -101,25 +107,6 @@ router.put('/roster/:id', isAuthenticated, isAdmin, (req, res) => {
     .then(doc => res.send(doc));
 
 })
-  // // const currentUser = req.user
-  // const { date, location, staff} = req.body;
-  // const shiftSelected = Roster.findOne({"_id": id})
-  // const removeStaffMember = 
-  
-  // const roster = new Roster({
-  //   date,
-  //   location,
-  //   staff
-  // });
-
-  // roster.save()
-  //   .then(doc => {
-  //     res.send(`${doc.location} has been created`);
-  //   })
-  //   .catch(err => res.status(401).send(err))
-// });
-
-
 
 
 router.get('/logout', (req, res) => {
