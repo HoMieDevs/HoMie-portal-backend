@@ -57,6 +57,7 @@ router.post('/register', isAuthenticated, isAdmin, (req, res) => {
 
 router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
   const { date, location, staff } = req.body;
+  const { date, location, staff} = req.body;
   const roster = new Roster({
     date,
     location,
@@ -79,6 +80,34 @@ router.get('/unavailibility', (req, res) => {
 router.put('/unavailibility', (req, res) => {
   
 })
+
+router.get('/roster/:id/', (req,res)=>{
+    const { id } = req.params;
+    console.log(id)
+    Roster.findOne({
+      "_id": id
+    }, function(err, roster) {
+      res.send(roster);
+      console.log(roster)
+    });
+});
+
+router.put('/roster/:id', isAuthenticated, isAdmin, (req, res) => {
+    const _id = req.params.id
+    const { date, location, staff } = req.body
+
+    Roster.findOneAndUpdate(
+        { _id },
+        { date, location, staff },
+        {
+            new: true,
+            runValidators: true
+        }
+    )
+    .then(doc => res.send(doc));
+
+})
+
 
 router.get('/logout', (req, res) => {
   req.logout();
