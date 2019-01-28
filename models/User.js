@@ -28,8 +28,8 @@ const userSchema = new Schema({
   unavailability: {  
     date: Date,
     allDay: Boolean,
-    startTime: Date,
-    endTime: Date,
+    startTime: String,
+    endTime: String,
     comment: String,
     approved: Boolean
   },
