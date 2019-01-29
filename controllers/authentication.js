@@ -128,8 +128,14 @@ router.delete('/unavailability/:id/:unid', isAuthenticated,  (req, res) => {
 
 })
 
+router.get('/roster', isAuthenticated, (req,res)=>{
+  Roster.find({})
+        .then(doc => {
+          return res.send(doc)
+    })
+});
 
-router.get('/roster/:id/', (req,res)=>{
+router.get('/roster/:id/', isAuthenticated, (req,res)=>{
     const { id } = req.params;
     Roster.findOne({
       "_id": id
@@ -137,6 +143,7 @@ router.get('/roster/:id/', (req,res)=>{
       res.send(roster);
     });
 });
+
 
 router.put('/roster/:id', isAuthenticated, isAdmin, (req, res) => {
     const _id = req.params.id
@@ -153,7 +160,6 @@ router.put('/roster/:id', isAuthenticated, isAdmin, (req, res) => {
     .then(doc => res.send(doc));
 
 })
-
 
 router.get('/logout', (req, res) => {
   req.logout();
