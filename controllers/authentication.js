@@ -78,22 +78,6 @@ router.put('/unavailability/:id', isAuthenticated,  (req, res) => {
   const _id = req.params.id
   const { unavailability } = req.body
 
-  // User.findOneAndUpdate(
-  //     { _id },
-  //     { unavailability },
-  //     {
-  //         new: true,
-  //         runValidators: true
-  //     }
-  // )
-  // .then(doc => res.send(doc));
-
-//   PersonModel.update(
-//     { _id: person._id }, 
-//     { $push: { friends: friend } },
-//     done
-// );
-
   User.findOneAndUpdate(
       { _id },
       { $push: {unavailability} },
@@ -103,6 +87,24 @@ router.put('/unavailability/:id', isAuthenticated,  (req, res) => {
       }
   )
   .then(doc => res.send(doc));
+
+})
+
+router.delete('/unavailability/:id/:unid', isAuthenticated,  (req, res) => {
+  const id = req.params.id
+  const unid = req.params.unid
+  
+  User.findOne({
+    "_id": id
+  }, function(err, user) {
+    user.unavailability.forEach(un => {
+      if(un._id == unid) {
+        user.unavailability.remove(un)
+        user.save()
+      }
+    })
+    res.send(user)
+  })
 
 })
 
