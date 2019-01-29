@@ -70,7 +70,19 @@ router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
 
 router.get('/unavailibility', (req, res) => {
   console.log(req.user)
-  // const { date, allDay, startTime, endTime, comment, approved } = req.body;
+
+  
+  
+})
+
+router.get('/unavailibility/:id', (req, res) => {
+  const id = req.params.id
+  
+  User.findOne({
+    "_id": id
+  }, function(err, user) {
+    res.send(user.unavailability)
+  })
   
 })
 
