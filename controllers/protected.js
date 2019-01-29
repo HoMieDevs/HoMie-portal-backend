@@ -13,7 +13,10 @@ router.use(isAuthenticated);
 
 router.get('/users', (req, res) => {
   User.find()
-    .then(docs => res.send(docs));
+    .then(docs => {
+      console.log("getting staff")
+      res.send(docs)
+    });
 });
 
 module.exports = router;

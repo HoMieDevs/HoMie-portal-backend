@@ -50,9 +50,9 @@ passport.use(new LocalStrategy(
     console.log("RUNNING PASSPORT")
     User.findOne({ email }, (err, user) => {
       if (err) { return done(err); }
-      if (!user) { return done(null, false, { message: 'Incorrect email' }); }
+      if (!user) { return done(null, false, { message: 'Incorrect credentials' }); }
       if (!bcrypt.compareSync(password, user.password)) {
-        return done(null, false, { message: 'Incorrect password' });
+        return done(null, false, { message: 'Incorrect credentials' });
       }
       return done(null, user);
     });
