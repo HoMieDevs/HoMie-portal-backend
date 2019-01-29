@@ -68,9 +68,29 @@ router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
     .catch(err => res.status(401).send(err))
 });
 
-router.get('/unavailibility', (req, res) => {
-  console.log(req.user)
-  // const { date, allDay, startTime, endTime, comment, approved } = req.body;
+router.get('/unavailibility', isAuthenticated, isAdmin, (req, res) => {
+  const allUnavail = []
+
+  User.find({})
+    .then(staff => {
+      staff.forEach(doc => {
+        const user = doc.firstName
+        const unavail = doc.unavailability
+        allUnavail.push({user, unavail})
+      })
+      res.send(allUnavail)
+    })
+
+})
+
+router.get('/unavailibility/:id', isAuthenticated, (req, res) => {
+  const id = req.params.id
+  
+  User.findOne({
+    "_id": id
+  }, function(err, user) {
+    res.send(user.unavailability)
+  })
   
 })
 
