@@ -74,13 +74,29 @@ router.get('/unavailibility', (req, res) => {
   
 })
 
-router.put('/unavailability/:id', isAuthenticated, isAdmin, (req, res) => {
+router.put('/unavailability/:id', isAuthenticated,  (req, res) => {
   const _id = req.params.id
   const { unavailability } = req.body
 
+  // User.findOneAndUpdate(
+  //     { _id },
+  //     { unavailability },
+  //     {
+  //         new: true,
+  //         runValidators: true
+  //     }
+  // )
+  // .then(doc => res.send(doc));
+
+//   PersonModel.update(
+//     { _id: person._id }, 
+//     { $push: { friends: friend } },
+//     done
+// );
+
   User.findOneAndUpdate(
       { _id },
-      { unavailability },
+      { $push: {unavailability} },
       {
           new: true,
           runValidators: true

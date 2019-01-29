@@ -25,14 +25,14 @@ const userSchema = new Schema({
   },
   mobile: String,
   avatar: String,
-  unavailability: {  
+  unavailability: [{  
     date: Date,
     allDay: Boolean,
     startTime: String,
     endTime: String,
     comment: String,
     approved: Boolean
-  },
+  }],
   isDeleted: {
     type: Boolean,
     default: false
