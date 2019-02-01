@@ -131,14 +131,21 @@ router.get('/roster/:id/', isAuthenticated, (req,res)=>{
 
 router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
   const { date, location, staff } = req.body;
-  
+
+  // back end recieves the name
+  // compare to user database to get the id
+  // send user id to roster db
+
+  // const staffName = staff.staffMember
+
+  // User.findOne({staffName})
+  //   .then(doc => console.log(doc))
+
   const roster = new Roster({
     date,
     location,
     staff
   });
-
-// get the staffMember input and compare it to user model id
 
   roster.save()
     .then(doc => {
