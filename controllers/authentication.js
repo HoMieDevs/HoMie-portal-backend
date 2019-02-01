@@ -60,6 +60,7 @@ router.post("/register", isAuthenticated, isAdmin, (req, res) => {
     .catch(err => res.status(401).send("bad request"));
 });
 
+
 router.post("/roster", isAuthenticated, isAdmin, (req, res) => {
   const { date, location, staff } = req.body;
   const roster = new Roster({
@@ -78,7 +79,6 @@ router.post("/roster", isAuthenticated, isAdmin, (req, res) => {
 
 router.get("/unavailibility", isAuthenticated, isAdmin, (req, res) => {
   const allUnavail = [];
-
   User.find({}).then(staff => {
     staff.forEach(doc => {
       const user = doc.firstName;
@@ -153,6 +153,27 @@ router.get("/roster/:id/", isAuthenticated, (req, res) => {
     }
   );
 });
+
+
+router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
+  const { date, location, staff } = req.body;
+  
+  const roster = new Roster({
+    date,
+    location,
+    staff
+  });
+
+// get the staffMember input and compare it to user model id
+
+  roster.save()
+    .then(doc => {
+      console.log(doc.staff)
+      res.send("roster has been created");
+    })
+    .catch(err => res.status(401).send(err))
+});
+
 
 router.put("/roster/:id", isAuthenticated, isAdmin, (req, res) => {
   const _id = req.params.id;
