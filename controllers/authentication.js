@@ -1,25 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcryptjs");
-const passport = require("passport");
-const saltRounds = 10;
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const saltRounds = 10
 
-const User = require("../models/User");
-const Roster = require("../models/Roster");
+const User = require('../models/User');
+const Roster = require('../models/Roster');
 
 const authenticateUser = (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.status(401).send(info.message);
-    }
-    req.logIn(user, err => {
-      if (err) {
-        return next(err);
-      }
-      return res.send("Successfully authenticated");
+  passport.authenticate('local', (err, user, info) => {
+    if (err) { return next(err) }
+    if (!user) { return res.status(401).send(info.message) }
+    req.logIn(user, (err) => {
+      if (err) { return next(err) }
+      return res.send({message: 'Successfully authenticated', userId: user._id, admin: user.admin});
     });
   })(req, res, next);
 };
@@ -172,9 +166,12 @@ router.put("/roster/:id", isAuthenticated, isAdmin, (req, res) => {
   ).then(doc => res.send(doc));
 });
 
-router.get("/logout", (req, res) => {
-  req.logout();
-  res.send("Successfully logged out");
+router.get('/logout', async (req, res) => {
+  await req.logout()
+  req.session = null
+  req.sessionOptions.maxAge = 0
+  res.send('Successfully logged out');
+  return res.redirect('/')
 });
 
 router.get("/me", (req, res) => {
