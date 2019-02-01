@@ -13,7 +13,7 @@ const authenticateUser = (req, res, next) => {
     if (!user) { return res.status(401).send(info.message) }
     req.logIn(user, (err) => {
       if (err) { return next(err) }
-      return res.send('Successfully authenticated');
+      return res.send({message: 'Successfully authenticated', admin: user.admin});
     });
   })(req, res, next);
 }
