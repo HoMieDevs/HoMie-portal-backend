@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
+// const cookieSession = require('cookie-session')
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
 const saltRounds = 10
 
 const User = require('../models/User');
 const Roster = require('../models/Roster');
+// app.use(passport.session());
 
 const authenticateUser = (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
@@ -13,7 +15,7 @@ const authenticateUser = (req, res, next) => {
     if (!user) { return res.status(401).send(info.message) }
     req.logIn(user, (err) => {
       if (err) { return next(err) }
-      return res.send('Successfully authenticated');
+      return res.send({message: 'Successfully authenticated', userId: user._id, admin: user.admin});
     });
   })(req, res, next);
 }
@@ -164,9 +166,12 @@ router.put('/roster/:id', isAuthenticated, isAdmin, (req, res) => {
 
 })
 
-router.get('/logout', (req, res) => {
-  req.logout();
+router.get('/logout', async (req, res) => {
+  await req.logout()
+  req.session = null
+  req.sessionOptions.maxAge = 0
   res.send('Successfully logged out');
+  return res.redirect('/')
 });
 
 router.get('/me', (req, res) => {
