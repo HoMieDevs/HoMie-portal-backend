@@ -131,15 +131,19 @@ router.get('/roster/:id/', isAuthenticated, (req,res)=>{
 
 router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
   const { date, location, staff } = req.body;
+  
   const roster = new Roster({
     date,
     location,
     staff
   });
 
+// get the staffMember input and compare it to user model id
+
   roster.save()
     .then(doc => {
-      res.send(`${doc.location} has been created`);
+      console.log(doc.staff)
+      res.send("roster has been created");
     })
     .catch(err => res.status(401).send(err))
 });
