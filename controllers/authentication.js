@@ -155,19 +155,54 @@ router.post('/roster', isAuthenticated, isAdmin, (req, res) => {
     .catch(err => res.status(401).send(err))
 });
 
-router.put('/roster/:id', isAuthenticated, isAdmin, (req, res) => {
-    const _id = req.params.id
-    const { date, location, staff } = req.body
+// router.put('/roster/:id', isAuthenticated, isAdmin, (req, res) => {
+//     const _id = req.params.id
+//     const { date, location, staff } = req.body
 
-    Roster.findOneAndUpdate(
-        { _id },
-        { date, location, staff },
-        {
-            new: true,
-            runValidators: true
-        }
-    )
-    .then(doc => res.send(doc));
+//     Roster.findOneAndUpdate(
+//         { _id },
+//         { date, location, staff },
+//         {
+//             new: true,
+//             runValidators: true
+//         }
+//     )
+//     .then(doc => res.send(doc));
+
+// })
+
+router.put('/roster/:id', isAuthenticated, isAdmin,  (req, res) => {
+  const _id = req.params.id
+  const { staff } = req.body
+
+  Roster.findOneAndUpdate(
+      { _id },
+      { $push: {staff} },
+      {
+          new: true,
+          runValidators: true
+      }
+  )
+  .then(doc => res.send(doc));
+
+})
+
+router.delete('/roster/:id/:sid', isAuthenticated, isAdmin,  (req, res) => {
+  const id = req.params.id
+  const sid = req.params.sid
+  
+  Roster.findOne({
+    "_id": id
+  }, function(err, roster) {
+    roster.staff.forEach(st => {
+      console.log(st)
+      if(st._id == sid) {
+        roster.staff.remove(st)
+        roster.save()
+      }
+    })
+    res.send(roster)
+  })
 
 })
 
