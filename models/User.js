@@ -14,6 +14,14 @@ const userSchema = new Schema({
     type: Boolean,
     default: false
   },
+  store:{
+    type: Boolean,
+    default: false
+  }, 
+  office:{
+    type: Boolean,
+    default: false
+  },
   email: {
     type: String,
     required: true,
