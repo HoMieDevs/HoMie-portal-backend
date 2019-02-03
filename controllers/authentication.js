@@ -54,6 +54,72 @@ router.post("/register", isAuthenticated, isAdmin, (req, res) => {
     .catch(err => res.status(401).send("bad request"));
 });
 
+router.get("/staff/store/:date", isAuthenticated, isAdmin, (req,res) =>{
+  const shiftDate = req.params.date;
+  const allStaff = []
+  User.find({}).then(staff => {
+    staff.forEach(doc => {
+      if (doc.store) {
+        const id = doc._id
+        const firstName = doc.firstName;
+        const lastName = doc.lastName;
+        const unavail = [];
+        doc.unavailability.forEach(unav => {
+          if (unav){
+          if (unav.date) {
+            if (unav.date.toISOString() == shiftDate) {
+              const unaId = unav._id
+              const date = unav.date
+              const allDay = unav.allDay
+              const startTime = unav.startTime
+              const endTime = unav.endTime
+              const matchUnavail = {unaId, date, allDay, startTime, endTime}
+              unavail.push(matchUnavail)
+            }
+           } else {null}
+          } else {null}
+        })
+        allStaff.push({ id, firstName, lastName, unavail });
+      } else {null }
+    });
+    res.send({ allStaff: allStaff });  
+  })
+  .catch(err => res.status(401).send(err))
+})
+
+router.get("/staff/office/:date", isAuthenticated, isAdmin, (req,res) =>{
+  const shiftDate = req.params.date;
+  const allStaff = []
+  User.find({}).then(staff => {
+    staff.forEach(doc => {
+      if (doc.office) {
+        const id = doc._id
+        const firstName = doc.firstName;
+        const lastName = doc.lastName;
+        const unavail = [];
+        doc.unavailability.forEach(unav => {
+          if (unav){
+          if (unav.date) {
+            if (unav.date.toISOString() == shiftDate) {
+              const unaId = unav._id
+              const date = unav.date
+              const allDay = unav.allDay
+              const startTime = unav.startTime
+              const endTime = unav.endTime
+              const matchUnavail = {unaId, date, allDay, startTime, endTime}
+              unavail.push(matchUnavail)
+            }
+           } else {null}
+          } else {null}
+        })
+        allStaff.push({ id, firstName, lastName, unavail });
+      } else {null }
+    });
+    res.send({ allStaff: allStaff });  
+  })
+  .catch(err => res.status(401).send(err))
+})
+
 router.get("/unavailibility", isAuthenticated, isAdmin, (req, res) => {
   const allUnavail = [];
 
@@ -116,6 +182,7 @@ router.delete("/unavailability/:id/:unid", isAuthenticated, (req, res) => {
 
 router.get("/roster", isAuthenticated, (req, res) => {
   Roster.find({}).then(doc => {
+    console.log(doc)
     return res.send(doc);
   });
 });
@@ -131,6 +198,7 @@ router.get("/roster/:id/", isAuthenticated, (req, res) => {
     }
   );
 });
+
 
 router.post("/roster", isAuthenticated, isAdmin, (req, res) => {
   const { date, location, staff } = req.body;
