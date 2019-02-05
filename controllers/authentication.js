@@ -164,7 +164,7 @@ router.delete("/unavailability/:id/:unid", isAuthenticated, (req, res) => {
   const id = req.params.id;
   const unid = req.params.unid;
   const promises = [];
-
+  
   User.findOne(
     {
       _id: id
