@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -10,15 +10,15 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
-  admin:{
+  admin: {
     type: Boolean,
     default: false
   },
-  store:{
+  store: {
     type: Boolean,
     default: false
-  }, 
-  office:{
+  },
+  office: {
     type: Boolean,
     default: false
   },
@@ -33,14 +33,16 @@ const userSchema = new Schema({
   },
   mobile: String,
   avatar: String,
-  unavailability: [{  
-    date: Date,
-    allDay: Boolean,
-    startTime: String,
-    endTime: String,
-    comment: String,
-    approved: Boolean
-  }],
+  unavailability: [
+    {
+      date: String,
+      allDay: Boolean,
+      startTime: String,
+      endTime: String,
+      comment: String,
+      approved: Boolean
+    }
+  ],
   isDeleted: {
     type: Boolean,
     default: false
@@ -54,4 +56,4 @@ const userSchema = new Schema({
 //     password: String
 // })
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model("User", userSchema);
