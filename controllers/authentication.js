@@ -163,26 +163,34 @@ router.put("/unavailability/:id", isAuthenticated, (req, res) => {
 router.delete("/unavailability/:id/:unid", isAuthenticated, (req, res) => {
   const id = req.params.id;
   const unid = req.params.unid;
+  const promises = [];
 
   User.findOne(
     {
       _id: id
     },
     function(err, user) {
-      user.unavailability.forEach(un => {
-        if (un._id == unid) {
-          user.unavailability.remove(un);
-          user.save();
-        }
-      });
-      res.send(user);
+      const idx = user.unavailability.indexOf(unid);
+      user.unavailability.splice(idx, 1);
+      user.save()
+        .then(doc => res.send(user));
+      // user.unavailability.forEach(un => {
+      //   console.log(user.unavailability)
+      //   if (un._id == unid) {
+      //     user.unavailability.remove(un);
+      //     promises.push(user.save());
+      //   }
+      // });
+      // Promise.all(promises)
+      //   .then(results => res.send(user))
+      
     }
   );
 });
 
 router.get("/roster", isAuthenticated, (req, res) => {
   Roster.find({}).then(doc => {
-    console.log(doc)
+    // console.log(doc)
     return res.send(doc);
   });
 });
@@ -223,7 +231,7 @@ router.post("/roster", isAuthenticated, isAdmin, (req, res) => {
   roster
     .save()
     .then(doc => {
-      console.log(doc.staff);
+      // console.log(doc.staff);
       res.send("roster has been created");
     })
     .catch(err => res.status(401).send(err));
@@ -270,7 +278,7 @@ router.delete('/roster/:id/:sid', isAuthenticated, isAdmin,  (req, res) => {
     "_id": id
   }, function(err, roster) {
     roster.staff.forEach(st => {
-      console.log(st)
+      // console.log(st)
       if(st._id == sid) {
         roster.staff.remove(st)
         roster.save()
