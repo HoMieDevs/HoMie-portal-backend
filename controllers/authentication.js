@@ -19,6 +19,7 @@ const authenticateUser = (req, res, next) => {
 };
 
 const isAuthenticated = (req, res, next) => {
+  console.log("AUTHENT")
   if (!req.user) {
     return res.status(403).send("Not authorized!");
   }
@@ -26,6 +27,7 @@ const isAuthenticated = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
+  console.log("ADMINZ")
   if (!req.user.admin) {
     return res.status(403).send("Not authorized!");
   }
@@ -59,17 +61,21 @@ router.get("/staff/store/:date", isAuthenticated, isAdmin, (req,res) =>{
   const allStaff = []
   User.find({}).then(staff => {
     staff.forEach(doc => {
-      if (doc.store) {
+      if (doc.office) {
         const id = doc._id
         const firstName = doc.firstName;
         const lastName = doc.lastName;
         const unavail = [];
         doc.unavailability.forEach(unav => {
           if (unav){
-          if (unav.date) {
-            if (unav.date.toISOString() == shiftDate) {
+            if (unav.date) {
+              const newShiftDate = new Date(shiftDate) 
+              const newUnavDate = new Date(unav.date) 
+              console.log((newShiftDate)) 
+              console.log((newUnavDate)) 
+              if (newShiftDate === newUnavDate) {
               const unaId = unav._id
-              const date = unav.date
+              const date = newShiftDate
               const allDay = unav.allDay
               const startTime = unav.startTime
               const endTime = unav.endTime
@@ -99,10 +105,14 @@ router.get("/staff/Office/:date", isAuthenticated, isAdmin, (req,res) =>{
         const unavail = [];
         doc.unavailability.forEach(unav => {
           if (unav){
-          if (unav.date) {
-            if (unav.date.toISOString() == shiftDate) {
+            if (unav.date) {
+              const newShiftDate = new Date(shiftDate) 
+              const newUnavDate = new Date(unav.date) 
+              console.log((newShiftDate)) 
+              console.log((newUnavDate)) 
+              if (newShiftDate === newUnavDate) {
               const unaId = unav._id
-              const date = unav.date
+              const date = newShiftDate
               const allDay = unav.allDay
               const startTime = unav.startTime
               const endTime = unav.endTime
@@ -178,26 +188,34 @@ router.put("/unavailabilityapprove/:id/:unid", isAuthenticated, isAdmin, (req, r
 router.delete("/unavailability/:id/:unid", isAuthenticated, (req, res) => {
   const id = req.params.id;
   const unid = req.params.unid;
-
+  const promises = [];
+  
   User.findOne(
     {
       _id: id
     },
     function(err, user) {
-      user.unavailability.forEach(un => {
-        if (un._id == unid) {
-          user.unavailability.remove(un);
-          user.save();
-        }
-      });
-      res.send(user);
+      const idx = user.unavailability.indexOf(unid);
+      user.unavailability.splice(idx, 1);
+      user.save()
+        .then(doc => res.send(user));
+      // user.unavailability.forEach(un => {
+      //   console.log(user.unavailability)
+      //   if (un._id == unid) {
+      //     user.unavailability.remove(un);
+      //     promises.push(user.save());
+      //   }
+      // });
+      // Promise.all(promises)
+      //   .then(results => res.send(user))
+      
     }
   );
 });
 
 router.get("/roster", isAuthenticated, (req, res) => {
   Roster.find({}).then(doc => {
-    console.log(doc)
+    // console.log(doc)
     return res.send(doc);
   });
 });
@@ -251,17 +269,20 @@ router.post("/roster", isAuthenticated, isAdmin, (req, res) => {
 
 router.put('/roster/:id', isAuthenticated, isAdmin,  (req, res) => {
   const _id = req.params.id
-  const { staff } = req.body
-
-  Roster.findOneAndUpdate(
+  console.log(_id)
+  const { staffMember, startTime, endTime} = req.body
+  const staff = { staffMember, startTime, endTime}
+  console.log(staff)
+  Roster.findOne(
       { _id },
-      { $push: {staff} },
-      {
-          new: true,
-          runValidators: true
-      }
   )
-  .then(doc => res.send(doc));
+  .then(doc => {
+    doc.staff.push(staff)
+    doc.save()
+    .then(updateddoc => {
+      res.send(doc
+      )})
+  })
 
 })
 
@@ -273,7 +294,7 @@ router.delete('/roster/:id/:sid', isAuthenticated, isAdmin,  (req, res) => {
     "_id": id
   }, function(err, roster) {
     roster.staff.forEach(st => {
-      console.log(st)
+      // console.log(st)
       if(st._id == sid) {
         roster.staff.remove(st)
         roster.save()
