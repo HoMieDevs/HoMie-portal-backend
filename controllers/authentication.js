@@ -19,6 +19,7 @@ const authenticateUser = (req, res, next) => {
 };
 
 const isAuthenticated = (req, res, next) => {
+  console.log("AUTHENT")
   if (!req.user) {
     return res.status(403).send("Not authorized!");
   }
@@ -26,6 +27,7 @@ const isAuthenticated = (req, res, next) => {
 };
 
 const isAdmin = (req, res, next) => {
+  console.log("ADMINZ")
   if (!req.user.admin) {
     return res.status(403).send("Not authorized!");
   }
@@ -59,17 +61,21 @@ router.get("/staff/store/:date", isAuthenticated, isAdmin, (req,res) =>{
   const allStaff = []
   User.find({}).then(staff => {
     staff.forEach(doc => {
-      if (doc.store) {
+      if (doc.office) {
         const id = doc._id
         const firstName = doc.firstName;
         const lastName = doc.lastName;
         const unavail = [];
         doc.unavailability.forEach(unav => {
           if (unav){
-          if (unav.date) {
-            if (unav.date.toISOString() == shiftDate) {
+            if (unav.date) {
+              const newShiftDate = new Date(shiftDate) 
+              const newUnavDate = new Date(unav.date) 
+              console.log((newShiftDate)) 
+              console.log((newUnavDate)) 
+              if (newShiftDate === newUnavDate) {
               const unaId = unav._id
-              const date = unav.date
+              const date = newShiftDate
               const allDay = unav.allDay
               const startTime = unav.startTime
               const endTime = unav.endTime
@@ -99,10 +105,14 @@ router.get("/staff/office/:date", isAuthenticated, isAdmin, (req,res) =>{
         const unavail = [];
         doc.unavailability.forEach(unav => {
           if (unav){
-          if (unav.date) {
-            if (unav.date.toISOString() == shiftDate) {
+            if (unav.date) {
+              const newShiftDate = new Date(shiftDate) 
+              const newUnavDate = new Date(unav.date) 
+              console.log((newShiftDate)) 
+              console.log((newUnavDate)) 
+              if (newShiftDate === newUnavDate) {
               const unaId = unav._id
-              const date = unav.date
+              const date = newShiftDate
               const allDay = unav.allDay
               const startTime = unav.startTime
               const endTime = unav.endTime
@@ -256,17 +266,20 @@ router.post("/roster", isAuthenticated, isAdmin, (req, res) => {
 
 router.put('/roster/:id', isAuthenticated, isAdmin,  (req, res) => {
   const _id = req.params.id
-  const { staff } = req.body
-
-  Roster.findOneAndUpdate(
+  console.log(_id)
+  const { staffMember, startTime, endTime} = req.body
+  const staff = { staffMember, startTime, endTime}
+  console.log(staff)
+  Roster.findOne(
       { _id },
-      { $push: {staff} },
-      {
-          new: true,
-          runValidators: true
-      }
   )
-  .then(doc => res.send(doc));
+  .then(doc => {
+    doc.staff.push(staff)
+    doc.save()
+    .then(updateddoc => {
+      res.send(doc
+      )})
+  })
 
 })
 
