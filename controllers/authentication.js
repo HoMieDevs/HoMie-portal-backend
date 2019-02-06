@@ -93,7 +93,7 @@ router.get("/staff/store/:date", isAuthenticated, isAdmin, (req,res) =>{
   .catch(err => res.status(401).send(err))
 })
 
-router.get("/staff/office/:date", isAuthenticated, isAdmin, (req,res) =>{
+router.get("/staff/Office/:date", isAuthenticated, isAdmin, (req,res) =>{
   const shiftDate = req.params.date;
   const allStaff = []
   User.find({}).then(staff => {
@@ -170,6 +170,21 @@ router.put("/unavailability/:id", isAuthenticated, (req, res) => {
   ).then(doc => res.send(doc));
 });
 
+router.put("/unavailabilityapprove/:id/:unid", isAuthenticated, isAdmin, (req, res) => {
+  const _id = req.params.id;
+  const unid = req.params.unid;
+
+  User.findOne(
+    { _id },
+    function(err, user) {
+      const unavailability = user.unavailability.find(u => u._id == unid);
+      unavailability.approved = true;
+      user.save()
+        .then(doc => res.send(doc));
+    }
+  );
+});
+
 router.delete("/unavailability/:id/:unid", isAuthenticated, (req, res) => {
   const id = req.params.id;
   const unid = req.params.unid;
@@ -205,7 +220,7 @@ router.get("/roster", isAuthenticated, (req, res) => {
   });
 });
 
-router.get("/roster/:id/", isAuthenticated, (req, res) => {
+router.get("/roster/:id", isAuthenticated, (req, res) => {
   const { id } = req.params;
   Roster.findOne(
     {
@@ -221,27 +236,15 @@ router.get("/roster/:id/", isAuthenticated, (req, res) => {
 router.post("/roster", isAuthenticated, isAdmin, (req, res) => {
   const { date, location, staff } = req.body;
 
-  // back end recieves the name
-  // compare to user database to get the id
-  // send user id to roster db
-
-  // const staffName = staff.staffMember
-
-  // User.findOne({staffName})
-  //   .then(doc => console.log(doc))
-
   const roster = new Roster({
     date,
     location,
     staff
   });
 
-  // get the staffMember input and compare it to user model id
-
   roster
     .save()
     .then(doc => {
-      // console.log(doc.staff);
       res.send("roster has been created");
     })
     .catch(err => res.status(401).send(err));

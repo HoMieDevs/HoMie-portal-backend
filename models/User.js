@@ -33,16 +33,18 @@ const userSchema = new Schema({
   },
   mobile: String,
   avatar: String,
-  unavailability: [
-    {
-      date: String,
-      allDay: Boolean,
-      startTime: String,
-      endTime: String,
-      comment: String,
-      approved: Boolean
+  unavailability: [{  
+    date: Date,
+    allDay: Boolean,
+    startTime: String,
+    endTime: String,
+    comment: String,
+    approved: {
+      type: Boolean,
+      default: false
     }
-  ],
+  }],
+
   isDeleted: {
     type: Boolean,
     default: false
