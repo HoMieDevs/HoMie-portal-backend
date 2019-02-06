@@ -39,7 +39,10 @@ const userSchema = new Schema({
     startTime: String,
     endTime: String,
     comment: String,
-    approved: Boolean
+    approved: {
+      type: Boolean,
+      default: false
+    }
   }],
   isDeleted: {
     type: Boolean,
