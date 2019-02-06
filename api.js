@@ -20,7 +20,7 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:3000"
+    origin: "https://5c5a2751fa6e6a017310b006--homie-portal-au.netlify.com/"
   })
 );
 
@@ -73,5 +73,7 @@ passport.use(
 app.use(require("./controllers"));
 
 const port = process.env.PORT || 5000;
+
+// const port = process.env.PORT;
 
 app.listen(port, () => console.log(`Server running on port ${port}`));
