@@ -20,7 +20,8 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: "https://5c5a2751fa6e6a017310b006--homie-portal-au.netlify.com/"
+    origin: "http://localhost:3000"
+    // origin: "https://homie-portal-au.netlify.com/"
   })
 );
 
