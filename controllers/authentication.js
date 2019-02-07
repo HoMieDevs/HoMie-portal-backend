@@ -69,8 +69,8 @@ router.get("/staff/store/:date", isAuthenticated, isAdmin, (req,res) =>{
         doc.unavailability.forEach(unav => {
           if (unav){
             if (unav.date) {
-              const newShiftDate = new Date(shiftDate) 
-              const newUnavDate = new Date(unav.date) 
+              const newShiftDate = new Date(shiftDate).toISOString()
+              const newUnavDate = new Date(unav.date).toISOString()
               console.log((newShiftDate)) 
               console.log((newUnavDate)) 
               if (newShiftDate === newUnavDate) {
@@ -81,7 +81,7 @@ router.get("/staff/store/:date", isAuthenticated, isAdmin, (req,res) =>{
               const endTime = unav.endTime
               const matchUnavail = {unaId, date, allDay, startTime, endTime}
               unavail.push(matchUnavail)
-            }
+            } else {null}
            } else {null}
           } else {null}
         })
@@ -106,8 +106,8 @@ router.get("/staff/office/:date", isAuthenticated, isAdmin, (req,res) =>{
         doc.unavailability.forEach(unav => {
           if (unav){
             if (unav.date) {
-              const newShiftDate = new Date(shiftDate) 
-              const newUnavDate = new Date(unav.date) 
+              const newShiftDate = new Date(shiftDate).toISOString()
+              const newUnavDate = new Date(unav.date).toISOString()
               console.log((newShiftDate)) 
               console.log((newUnavDate)) 
               if (newShiftDate === newUnavDate) {
@@ -118,7 +118,7 @@ router.get("/staff/office/:date", isAuthenticated, isAdmin, (req,res) =>{
               const endTime = unav.endTime
               const matchUnavail = {unaId, date, allDay, startTime, endTime}
               unavail.push(matchUnavail)
-            }
+            } else {null}
            } else {null}
           } else {null}
         })
@@ -201,6 +201,7 @@ router.delete("/unavailability/:id/:unid", isAuthenticated, (req, res) => {
 router.get("/roster", isAuthenticated, (req, res) => {
   Roster.find({}).then(doc => {
     // console.log(doc)
+    console.log("getting ROSTER")
     return res.send(doc);
   });
 });
@@ -280,34 +281,53 @@ router.put('/roster/:id', isAuthenticated, isAdmin,  (req, res) => {
       res.send(doc
       )})
   })
-
 })
+
+// , function(err, roster) {
+//   console.log(roster)
+//   roster.staff.forEach(st => {
+//     console.log(st.staffMember)
+//     console.log(sid)
+//     st.staffMember == sid ?
+//       console.log("******MATCH****")
+//       roster.staff.remove(st)
+//       roster.save()
+//     }
+//     : console.log(`${st.staffMember}and ${sid}dont match`)
+//     //   roster.staff.remove(st)
+//     //   roster.save()
+//     // }
+//   })
+//   res.send(roster)
+// })
 
 router.delete('/roster/:id/:sid', isAuthenticated, isAdmin,  (req, res) => {
   const id = req.params.id
   const sid = req.params.sid
-  
+  console.log(id)
+  console.log(sid)
   Roster.findOne({
     "_id": id
   }, function(err, roster) {
     roster.staff.forEach(st => {
       // console.log(st)
-      if(st._id == sid) {
+      if(st.staffMember == sid ) {
+        console.log("*****MATCH*****")
         roster.staff.remove(st)
         roster.save()
-      }
+      } else console.log("ids didnt match")
     })
     res.send(roster)
   })
 
-  Roster.findOneAndUpdate(
-    { _id },
-    { date, location, staff },
-    {
-      new: true,
-      runValidators: true
-    }
-  ).then(doc => res.send(doc));
+  // Roster.findOneAndUpdate(
+  //   { _id },
+  //   { date, location, staff },
+  //   {
+  //     new: true,
+  //     runValidators: true
+  //   }
+  // ).then(doc => res.send(doc));
 });
 
 router.get('/logout', async (req, res) => {
