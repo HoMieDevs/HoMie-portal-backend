@@ -56,6 +56,22 @@ router.post("/register", isAuthenticated, isAdmin, (req, res) => {
     .catch(err => res.status(401).send("bad request"));
 });
 
+router.put('/user/:id', isAuthenticated, (req, res) => {
+    const _id = req.params.id
+    const { firstName, lastName, mobile } = req.body
+
+    User.findOneAndUpdate(
+        { _id },
+        { firstName, lastName, mobile },
+        {
+            new: true,
+            runValidators: true
+        }
+    )
+    .then(doc => res.send(doc));
+
+})
+
 router.get("/staff/store/:date", isAuthenticated, isAdmin, (req,res) =>{
   const shiftDate = req.params.date;
   const allStaff = []
@@ -188,17 +204,23 @@ router.put("/unavailabilityapprove/:id/:unid", isAuthenticated, isAdmin, (req, r
 router.delete("/unavailability/:id/:unid", isAuthenticated, (req, res) => {
   const id = req.params.id;
   const unid = req.params.unid;
-  const promises = [];
+  // const promises = [];
   
   User.findOne(
     {
       _id: id
     },
     function(err, user) {
-      const idx = user.unavailability.indexOf(unid);
-      user.unavailability.splice(idx, 1);
+      const unavail = user.unavailability.find(u => u._id == unid);
+      unavail.remove(unavail);
       user.save()
-        .then(doc => res.send(user));
+        .then(doc => res.send(doc));
+
+      // const idx = user.unavailability.indexOf(unid);
+      // user.unavailability.splice(idx, 1);
+      // user.save()
+      //   .then(doc => res.send(user));
+
       // user.unavailability.forEach(un => {
       //   console.log(user.unavailability)
       //   if (un._id == unid) {
